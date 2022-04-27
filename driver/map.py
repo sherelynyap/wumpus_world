@@ -435,7 +435,7 @@ class MapCell:
 
 class R_Map:
 
-    def __init__(self, map_xsize, map_ysize):
+    def __init__(self, map_xsize = 3, map_ysize = 3):
         # Creation of array of world of mapsize_x and mapsize_y
         # What we know in map ----------------------------------------------
 
