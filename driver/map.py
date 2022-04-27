@@ -123,6 +123,7 @@ class Abs_Map:
             self.world_map[pos_y][pos_x-1].remove_stench()
 
     def reset(self):
+        self.reset_values()
         self.create_map()
 
     # Stepped onto the portal...

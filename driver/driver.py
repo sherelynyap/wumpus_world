@@ -112,7 +112,7 @@ def agent_move(move, current_loc, abs_map):
         new_ori = Directions(new_angle)
 
         # The percepts don't change when turning on the spot
-        query = "move(turnleft,[" + current_percepts + "])"
+        query = "move(turnright,[" + current_percepts + "])"
         list(prolog.query(query))
         abs_map.update_agentlocation(agent_x, agent_y, new_ori)
 
@@ -121,9 +121,6 @@ def agent_move(move, current_loc, abs_map):
         # The percepts don't change when turning on the spot
         query = "move(shoot,[" + current_percepts + "])"
         list(prolog.query(query))
-
-
-
 
 
 def move_forward(current_loc):
