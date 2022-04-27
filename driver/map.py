@@ -38,7 +38,11 @@ class Abs_Map:
         self.agent_current_orientation = Directions.RNORTH
         self.agent_arrow = 1
 
+
         self.world_map = []
+
+        # self.generate_elements_fixed()
+        self.generate_elements_random()
 
 
     def get_agentlocation(self):
@@ -62,8 +66,57 @@ class Abs_Map:
         self.agent_loc = [1, 4, self.agent_current_orientation]
         self.agent_current_loc = self.agent_loc
 
+    def generate_elements_random(self):
+        repeat_list = []
+
+        for j in range(self.portal-1):
+            while True: # PORTAL
+                x = random.randint(1, self.map_x - 2)
+                y = random.randint(1, self.map_y - 2)
+                portal_loc = [x,y]
+                if portal_loc not in repeat_list:
+                    self.portal_loc.append(portal_loc)
+                    repeat_list.append(portal_loc)
+                    break
+
+        while True: # COIN
+            x = random.randint(1, self.map_x - 2)
+            y = random.randint(1, self.map_y - 2)
+            coin_loc = [x, y]
+            if coin_loc not in repeat_list:
+                self.coin_loc = coin_loc
+                repeat_list.append(coin_loc)
+                break
+
+        while True: # WUMPUS
+            x = random.randint(1, self.map_x - 2)
+            y = random.randint(1, self.map_y - 2)
+            wumpus_loc = [x, y]
+            if wumpus_loc not in repeat_list:
+                self.wumpus_loc = wumpus_loc
+                repeat_list.append(wumpus_loc)
+                break
+
+        while True:
+            x = random.randint(1, self.map_x - 2)
+            y = random.randint(1, self.map_y - 2)
+            agent_loc = [x, y, Directions.RNORTH]
+            agent_check = [x, y]
+            if agent_check not in repeat_list:
+                self.agent_loc = agent_loc
+                self.agent_current_loc = agent_loc
+                self.agent_current_orientation = agent_loc[2]
+                repeat_list.append(wumpus_loc)
+                break
+
+
+
+
+
     def create_map(self):
             self.generate_elements_fixed()
+            #self.generate_elements_random()
+
             for y in range(self.map_y):
                 x_list = []
                 for x in range(self.map_x):
@@ -87,14 +140,13 @@ class Abs_Map:
                 self.setAdjacentCells(loc[0],loc[1],'tingle')
 
             pos = self.agent_loc
-            self.world_map[pos[1]][pos[0]].set_agent(pos[2])
-            self.world_map[pos[1]][pos[0]].set_confounded()
+            self.world_map[pos[1]][pos[0]].place_agent(pos[2])
 
-            print("Map is initialised!")
-            print("The location of agent is: ", self.agent_loc, " with orientation: ", self.agent_current_orientation)
-            print("The location of portal is: ", self.portal_loc)
-            print("The location of the coin is: ", self.coin_loc)
-            print("The location of the wumpus is: ", self.wumpus_loc)
+            # print("Map is initialised!")
+            # print("The location of agent is: ", self.agent_loc, " with orientation: ", self.agent_current_orientation)
+            # print("The location of portal is: ", self.portal_loc)
+            # print("The location of the coin is: ", self.coin_loc)
+            # print("The location of the wumpus is: ", self.wumpus_loc)
 
 
 
@@ -119,7 +171,7 @@ class Abs_Map:
             # print('Setting Adjacent cells for stench...')
             self.world_map[pos_y-1][pos_x].remove_stench()
             self.world_map[pos_y +1][pos_x].remove_stench()
-            self.world_map[pos_y][pos_x+1].move_stench()
+            self.world_map[pos_y][pos_x+1].remove_stench()
             self.world_map[pos_y][pos_x-1].remove_stench()
 
     def reset(self):
@@ -129,6 +181,7 @@ class Abs_Map:
     # Stepped onto the portal...
     def reposition(self):
         # Respawn to new place
+
         x = random.randint(1, self.map_x - 2)
         y = random.randint(1, self.map_y - 2)
 
@@ -137,6 +190,7 @@ class Abs_Map:
             y = random.randint(1, self.map_y - 2)
 
         self.update_agentlocation(x,y,Directions.RNORTH)
+        # print("New location for Agent: ", x , y )
 
 
     def get_safe(self, map):
@@ -147,8 +201,7 @@ class Abs_Map:
 
 
 
-
-    def reset_values(self, map_x,map_y, portal, coin=1, agent=1, wumpus=1):
+    def reset_values(self, map_x = 7,map_y = 6, portal =3, coin=1, agent=1, wumpus=1):
         # What we know in map ----------------------------------------------
         self.map_x = map_x
         self.map_y = map_y
@@ -169,7 +222,6 @@ class Abs_Map:
         self.agent_current_orientation = Directions.RNORTH
 
         self.world_map = []
-        self.reset()
 
     def print_world(self):
         print("===== << ABSOLUTE MAP >> ======")
@@ -299,7 +351,15 @@ class MapCell:
         self.set_confounded()
 
     def set_agent(self,orientation):
+        self.cell_grid[self.symbol4[0]][self.symbol4[1]] = '-'
         self.cell_grid[self.symbol5[0]][self.symbol5[1]] = self.facing[orientation]
+        self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '-'
+
+    def remove_agent(self):
+        self.cell_grid[self.symbol4[0]][self.symbol4[1]] = '.'
+        self.cell_grid[self.symbol5[0]][self.symbol5[1]] = '?'
+        self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '.'
+
 
 
     def set_confounded(self):
@@ -320,9 +380,9 @@ class MapCell:
 
     def remove_glitter(self):
         self.glitter = False
-        self.cell_grid[self.symbol7[0]][self.symbol7[1]] = '-'
-        self.cell_grid[self.symbol4[0]][self.symbol4[1]] = 'S'
-        self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '-'
+        self.cell_grid[self.symbol7[0]][self.symbol7[1]] = '.'
+        self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '.'
+        self.cell_grid[self.symbol4[0]][self.symbol4[1]] = '.'
 
 
     def wumpus_killed(self):
@@ -352,9 +412,9 @@ class MapCell:
         percept_list = []
         for x in range(len(percept)):
             if percept[x] == True:
-                percept_list.append('on')
+                percept_list.append("on")
             else:
-                percept_list.append('off')
+                percept_list.append("off")
         return percept_list
 
 
@@ -362,13 +422,13 @@ class MapCell:
 
 class R_Map:
 
-    def __init__(self):
+    def __init__(self, map_xsize, map_ysize):
         # Creation of array of world of mapsize_x and mapsize_y
         # What we know in map ----------------------------------------------
 
         #Initialise...
-        self.map_xsize = 3
-        self.map_ysize = 3
+        self.map_xsize = map_xsize
+        self.map_ysize = map_ysize
 
         self.center_x = math.floor(self.map_xsize // 2)
         self.center_y = math.floor(self.map_xsize // 2)
@@ -380,7 +440,15 @@ class R_Map:
             for x in range(self.map_xsize):
                     x_list.append(MapCell(wall=False))
             self.relative_map.append(x_list)
-        self.relative_map[self.center_y][self.center_x].set_agent('rnorth')
+        self.relative_map[self.center_y][self.center_x].place_agent(Directions.RNORTH)
+
+    def access_coordinate(self, r_map, x,y):
+        center = (len(r_map) // 2, len(r_map) // 2)
+        translated_coordinates = (center[0] + y, center[1] + x)
+
+        return r_map[translated_coordinates[0], translated_coordinates[1]]
+
+
 
     def print_rworld(self):
         print("===== << RELATIVE MAP >> ======")
@@ -391,8 +459,8 @@ class R_Map:
                 print('')
             print('---------------------')
 
-    def display_r_world(self):
-        print("===== << RELATIVE MAP >> ======")
+    def display_r_world(self, header):
+        print("===== <<", header , ">> ======")
         count = 0
 
         for y in range(self.map_ysize):  # 6 0,1,2,3,4,5,6
