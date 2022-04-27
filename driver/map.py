@@ -44,6 +44,12 @@ class Abs_Map:
     def get_agentlocation(self):
         return self.agent_current_loc
 
+    def shoot_arrow(self):
+        if self.agent_arrow > 0:
+            self.agent_arrow -= 1
+        else:
+            print('Agent does not have any arrows')
+
     def update_agentlocation(self, x, y, orientation):
         self.agent_current_loc = [x, y, orientation]
         self.world_map[y][x].set_agent(orientation)

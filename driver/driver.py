@@ -15,14 +15,17 @@ from pyswip import Prolog
 # Percepts format : [ Confounded, Stench, Tingle, Glitter, Bump, Scream ]
 # Actions: [ shoot, moveforward, turnleft, turnright, pickup ]
 
-def main():
-    # prolog_file = 'Agent.pl'
-    # prolog = Prolog()
-    # prolog.consult(prolog_file)
-    # agent_explore()
-    agent_correctness()
 
-def agent_explore():
+prolog_file = 'Agent.pl'
+prolog = Prolog()
+prolog.consult(prolog_file)
+
+
+def main():
+    # agent_explore()
+    agent_correctness(prolog)
+
+def agent_explore(prolog):
     # Initialisation...
     print("Initialisation... ")
     abs_map = Abs_Map(map_x=7, map_y=6, portal=3, coin=1)
@@ -34,18 +37,19 @@ def agent_explore():
 
 
     # reborn = list(prolog.query("reborn."))
-    # agent_action = list(prolog.query('explore(L)'))
+
 
 # Testing map update....
-def agent_correctness():
+def agent_correctness(prolog):
     test_list = [
         # Test 01
-        ['moveforward', 'moveforward', 'moveforward']
+        ['moveforward', 'moveforward', 'pickup']
         # ['moveforward', 'moveforward', 'turnleft']
         ]
     # Reset Agent
     # reborn = list(prolog.query("reborn."))
-    #
+    # Get
+    # agent_action = list(prolog.query('explore(L)'))
     abs_map = Abs_Map(map_x=7, map_y=6, portal=3, coin=1)
     abs_map.create_map()
     abs_map.display_abs_world('Initial Absolute Map')
@@ -67,6 +71,8 @@ def agent_move(move, current_loc, abs_map):
     agent_y = current_loc[1]
     agent_ori = current_loc[2]
 
+    current_percepts = abs_map.world_map[agent_y][agent_x].get_percepts()
+
     if move == 'moveforward':
         new_loc = move_forward(current_loc)
         proceed = check_status(new_loc, current_loc, abs_map)
@@ -79,15 +85,24 @@ def agent_move(move, current_loc, abs_map):
             abs_map.world_map[agent_y][agent_x].set_agent(agent_ori)
             print("Position updated!")
 
-        percepts = abs_map.world_map[agent_y][agent_x].get_percepts()
+        new_percepts = abs_map.world_map[agent_y][agent_x].get_percepts()
+        query = "move(turnleft,[" + new_percepts + "])"
+        list(prolog.query(query))
         print("Agent is at location: ", abs_map.agent_current_loc)
 
     elif move == 'pickup':
-        pass
+        # The percepts don't change when turning on the spot
+        abs_map.world_map[agent_y][agent_x].pick_coin()
+        query = "move(pickup,[" + current_percepts + "])"
+        list(prolog.query(query))
+
 
     elif move == 'turnleft':
         new_angle = (agent_ori.value - 90) % 360
         new_ori = Directions(new_angle)
+        # The percepts don't change when turning on the spot
+        query = "move(turnleft,[" + current_percepts + "])"
+        list(prolog.query(query))
 
         abs_map.update_agentlocation(agent_x,agent_y,new_ori)
 
@@ -96,7 +111,19 @@ def agent_move(move, current_loc, abs_map):
         new_angle = (agent_ori.value + 90) % 360
         new_ori = Directions(new_angle)
 
+        # The percepts don't change when turning on the spot
+        query = "move(turnleft,[" + current_percepts + "])"
+        list(prolog.query(query))
         abs_map.update_agentlocation(agent_x, agent_y, new_ori)
+
+    elif move == 'shoot':
+        abs_map.shoot_arrow() #Loses arrow
+        # The percepts don't change when turning on the spot
+        query = "move(shoot,[" + current_percepts + "])"
+        list(prolog.query(query))
+
+
+
 
 
 def move_forward(current_loc):
@@ -140,11 +167,7 @@ def check_status(new_loc,old_loc, abs_map):
 
     return True
 
-
-
-
 main()
-
 
 
 
