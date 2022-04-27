@@ -196,5 +196,3 @@ getAdjacentCells(X,Y,L) :-
     YD is Y-1,
     YU is Y+1,
     append([(XL,Y), (XR,Y), (X,YU), (X,YD)],[],L).
-
-
