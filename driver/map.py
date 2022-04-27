@@ -361,6 +361,11 @@ class MapCell:
         self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '.'
 
 
+    def set_wall(self):
+        self.wall = True
+        self.cell_grid = [['#', '#', '#'],
+                          ['#', '#', '#'],
+                          ['#', '#', '#']]
 
     def set_confounded(self):
         self.confounded = True
@@ -375,8 +380,10 @@ class MapCell:
     def pick_coin(self):
         if self.glitter == True:
             self.remove_glitter()
+            return True
         else:
             print("There is no coin in this cell...")
+            return False
 
     def remove_glitter(self):
         self.glitter = False
@@ -390,6 +397,14 @@ class MapCell:
         self.cell_grid[self.symbol4[0]][self.symbol4[1]] = '.'
         self.cell_grid[self.symbol5[0]][self.symbol5[1]] = 's'
         self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '.'
+
+    def wumpus_n_portal(self):
+        self.wumpus = True
+        self.portal = True
+        self.cell_grid[self.symbol4[0]][self.symbol4[1]] = '.'
+        self.cell_grid[self.symbol5[0]][self.symbol5[1]] = 'Q'
+        self.cell_grid[self.symbol6[0]][self.symbol6[1]] = '.'
+
 
     # In the case, wumpus has died
     def remove_stench(self):
@@ -416,8 +431,6 @@ class MapCell:
             else:
                 percept_list.append("off")
         return percept_list
-
-
 
 
 class R_Map:
