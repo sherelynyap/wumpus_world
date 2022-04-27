@@ -32,7 +32,9 @@ def main():
 def agent_explore(prolog):
     # Initialisation...
     print("Initialisation | Explore(L)... ")
-    reborn = list(prolog.query("reborn."))
+
+    r_map = R_Map()
+    r_map.display_r_world("Initial Relative Map")
 
     abs_map = Abs_Map(map_x=7, map_y=6, portal=3, coin=1)
     abs_map.create_map()
@@ -44,8 +46,6 @@ def agent_explore(prolog):
 
     agent_actions = list(prolog.query('explore(L)'))
     print("Action received:", agent_actions)
-
-    generate_rmap()
 
 
     for moves in agent_actions:
@@ -63,6 +63,9 @@ def agent_correctness(prolog):
          'moveforward', 'moveforward', 'pickup']  # Action will pick up the coin
     ]
     # Reset Agent
+    r_map = R_Map()
+    r_map.display_r_world("Initial Relative Map")
+
     abs_map = Abs_Map(map_x=7, map_y=6, portal=3, coin=1)
     abs_map.create_map()
     abs_map.display_abs_world('Initial Absolute Map')
@@ -309,68 +312,6 @@ def convert_perceptlist(p):
 
     return '-'.join(percepts)
 
-
-def generate_rmap():  # Printing Agent Knowledge map...
-    query_visited = list(prolog.query("visited(X,Y)"))
-    query_wumpus = list(prolog.query("wumpus(X,Y)"))
-    query_portal = list(prolog.query("confundus(X,Y)"))
-    query_tingle = list(prolog.query("tingle(X,Y)"))
-    query_glitter = list(prolog.query("glitter(X,Y)"))
-    query_stench = list(prolog.query("stench(X,Y)"))
-    query_safe = list(prolog.query("safe(X,Y)"))
-    query_wall = list(prolog.query("wall(X,Y)"))
-
-    visited_x = [abs(x["X"]) for x in query_visited]
-    visited_y = [abs(y["Y"]) for y in query_visited]
-    max_x = max(visited_x)
-    max_y = max(visited_y)
-
-    r = R_Map(2 * (max_y + 1) + 1, 2 * (max_x + 1) + 1)
-    center_x = r.relative_map.center_x
-    center_y = r.relative_map.center_y
-    for predict in query_wumpus:
-         x = predict['X']
-         y = predict['Y']
-         r.relative_map[center_y + y][center_x + x].set_wumpus()
-
-    for predict in query_tingle:
-         x = predict['X']
-         y = predict['Y']
-         r.relative_map[center_y + y][center_x + x].set_tingle()
-
-    for predict in query_portal:
-        x = predict['X']
-        y = predict['Y']
-        r.relative_map[center_y + y][center_x + x].set_portal()
-
-    for predict in query_glitter:
-        x = predict['X']
-        y = predict['Y']
-        r.relative_map[center_y + y][center_x + x].set_glitter()
-
-    for predict in query_stench:
-        x = predict['X']
-        y = predict['Y']
-        r.relative_map[center_y + y][center_x + x].set_stench()
-
-    for predict in query_safe:
-        x = predict['X']
-        y = predict['Y']
-        r.relative_map[center_y + y][center_x + x].set_safe()
-
-    for predict in query_wall:
-        x = predict['X']
-        y = predict['Y']
-        r.relative_map[center_y + y][center_x + x].set_wall()
-
-
-
-
-
-    # N x M where both numbers are always ODD
-
-
-    pass
 
 
 main()
