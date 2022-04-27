@@ -84,25 +84,24 @@ def agent_move(move, current_loc, abs_map):
             abs_map.update_agentlocation(new_loc[0], new_loc[1], new_loc[2])
             abs_map.world_map[agent_y][agent_x].set_agent(agent_ori)
             print("Position updated!")
-
-        new_percepts = abs_map.world_map[agent_y][agent_x].get_percepts()
-        query = "move(turnleft,[" + new_percepts + "])"
-        list(prolog.query(query))
-        print("Agent is at location: ", abs_map.agent_current_loc)
+        else:
+            # query = "move(turnleft,[" + abs_map.world_map[agent_y][agent_x].get_percepts() + "])"
+            # list(prolog.query(query))
+            print("Agent is at location: ", abs_map.agent_current_loc)
 
     elif move == 'pickup':
         # The percepts don't change when turning on the spot
-        abs_map.world_map[agent_y][agent_x].pick_coin()
-        query = "move(pickup,[" + current_percepts + "])"
-        list(prolog.query(query))
+        # abs_map.world_map[agent_y][agent_x].pick_coin()
+        # query = "move(pickup,[" + abs_map.world_map[agent_y][agent_x].get_percepts() + "])"
+        # list(prolog.query(query))
 
 
     elif move == 'turnleft':
         new_angle = (agent_ori.value - 90) % 360
         new_ori = Directions(new_angle)
         # The percepts don't change when turning on the spot
-        query = "move(turnleft,[" + current_percepts + "])"
-        list(prolog.query(query))
+        # query = "move(turnleft,[" + abs_map.world_map[agent_y][agent_x].get_percepts() + "])"
+        # list(prolog.query(query))
 
         abs_map.update_agentlocation(agent_x,agent_y,new_ori)
 
@@ -110,17 +109,16 @@ def agent_move(move, current_loc, abs_map):
     elif move == 'turnright':
         new_angle = (agent_ori.value + 90) % 360
         new_ori = Directions(new_angle)
-
         # The percepts don't change when turning on the spot
-        query = "move(turnright,[" + current_percepts + "])"
-        list(prolog.query(query))
-        abs_map.update_agentlocation(agent_x, agent_y, new_ori)
+        # query = "move(turnright,[" + abs_map.world_map[agent_y][agent_x].get_percepts() + "])"
+        # list(prolog.query(query))
+        # abs_map.update_agentlocation(agent_x, agent_y, new_ori)
 
     elif move == 'shoot':
         abs_map.shoot_arrow() #Loses arrow
         # The percepts don't change when turning on the spot
-        query = "move(shoot,[" + current_percepts + "])"
-        list(prolog.query(query))
+        # query = "move(shoot,[" + abs_map.world_map[agent_y][agent_x].get_percepts() + "])"
+        # list(prolog.query(query))
 
 
 def move_forward(current_loc):
