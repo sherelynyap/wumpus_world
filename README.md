@@ -8,4 +8,4 @@
 	* MAIN = > Team KJS Driver code (The Agent code is to be placed at the directory before this)
 
 * File Name: "map.py"
-	* Map classes defined 
+	* Map classes defined for the driver
