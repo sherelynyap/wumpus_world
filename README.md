@@ -2,9 +2,9 @@
 	* Team KJS Agent code 
 
 ### Folder: Driver
-* File Name: "TeamKJS-testPrintout.txt"
+* File Name: "TeamKJS-testPrintout-Others.txt"
 	* Presentation of the absolute map updates given a sequence of actions (2 actions) 
-* File Name: "driver.py"
+* File Name: "Driver.py"
 	* MAIN = > Team KJS Driver code (The Agent code is to be placed at the directory before this)
 
 * File Name: "map.py"
